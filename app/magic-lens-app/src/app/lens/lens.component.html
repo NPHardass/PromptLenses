@@ -1,0 +1,218 @@
+<div class="content-area">
+  <div class="left-side">
+    <div class="jumbotron jumbotron-dataviz">
+      <div id="my_dataviz">
+      </div>
+    </div>
+    <div id="lens-options">
+      <button class="btn btn-secondary" id="openLensOptionsButton" (click)="openLensOptionsModal()"><i
+          class="bi bi-gear-fill"></i></button>
+      <div class="btn-group-vertical" role="group" aria-label="lens button group">
+        <input type="range" class="form-range" id="lensSizeSlider" min="0" max="100" step="5" value="50">
+        <button class="btn btn-secondary" id="centerLens" (click)="centerLens()">Give me the lens!</button>
+      </div>
+      <button class="btn btn-success" id="chatGpt" (click)="promptChatGPT()">Explain with AI <i
+          class="bi bi-chat"></i></button>
+    </div>
+  </div>
+  <div class="jumbotron jumbotron-response">
+    <div class="singleArticleInfoContainer" id="singleArticleInfoContainerShort" style="display: none; position: relative;">
+      <button
+          style="position: absolute; top: 0px; right: 0px; background: none; border: none; font-size: 25px; cursor: pointer;"
+          (click)=removeSingleArticleInfoContainer()>&times;</button>
+      <div id="singleArticleSummary" (click)="onAuthorNameClick($event)">You can double-click any data point to get more information about the article behind
+        it.<br><br> Click it again to unfocus it.</div>
+      <button id="showFullArticleButton" class="btn btn-primary" (click)="showFullArticleButtonClick()">Read more</button>
+    </div>
+    <div class="singleArticleInfoContainer" id="singleArticleInfoContainerFull" style="display: none; position: relative;">
+      <button
+          style="position: absolute; top: 0px; right: 0px; background: none; border: none; font-size: 25px; cursor: pointer;"
+          (click)=removeSingleArticleInfoContainer()>&times;</button>
+      <div id="singleArticleFull" [innerHtml]="formattedFullArticleHtml" (click)="onAuthorNameClick($event)">
+      </div>
+      <a [href]="safeArticleUrl" target="_blank" id="fullArticleLink">Full article</a>
+      <button id="showSummaryOfArticleButton" class="btn btn-secondary" (click)="showSummaryOfArticleButtonClick()">Back to summary</button>
+    </div>
+    <div id="response-field">
+      <div id="quick-summary-field" style="display:none">
+        <div class="response-with-keywords" id="quick-ai-response-with-keywords"
+          [innerHTML]="quickAiResponseWithKeywordsHtml" (click)="onWordClick($event)">
+        </div>
+        <div class="quick-chat">
+          <i class="bi bi-chat"></i>
+        </div>
+        <button class="btn btn-primary" id="showDetailedSummaryButton" (click)="showDetailedSummary()">Show more
+          details</button>
+      </div>
+      <div id="quickSpinner" class="spinner" style="display: none;"></div>
+      <div class="response-with-keywords" id="quick-old-summary-field">
+        <div id="quick-old-ai-response" [innerHTML]="quickOldAiResponseWithKeywordsHtml" (click)="onWordClick($event)">
+        </div>
+        <div class="quick-chat">
+          <i class="bi bi-chat"></i>
+        </div>
+      </div>
+      <div id="custom-ai-response-with-keywords-container" style="display: none; position: relative;">
+        <button
+          style="position: absolute; top: 0px; right: 0px; background: none; border: none; font-size: 25px; cursor: pointer;"
+          (click)=removeCustomAiResponseContainer()>&times;</button>
+        <div class="response-with-keywords" id="custom-ai-response-with-keywords"
+          [innerHTML]="customAiResponseWithKeywordsHtml" (click)="onWordClick($event)">
+        </div>
+        <div class="quick-chat">
+          <i class="bi bi-chat"></i>
+        </div>
+      </div>
+      <div id="detailedSpinner" class="spinner" style="display: none;"></div>
+      <div id="author-description-container" style="display:none; position: relative;">
+        <button
+          style="position: absolute; top: 0px; right: 0px; background: none; border: none; font-size: 25px; cursor: pointer;"
+          (click)=removeAuthorDescriptionContainer()>&times;</button>
+        <div id="author-title" [innerHTML]="authorTitleHtml"></div>
+        <div id="chart-container">
+          <canvas id="chartCanvas"></canvas>
+        </div>
+        <button class="btn btn-secondary" id="removeLongAuthorDescriptionButton"
+          (click)="removeLongAuthorDescriptionButtonClick()" style="display:none">Back to short description</button>
+        <div id="author-description" [innerHTML]="authorDescriptionHtml" (click)="onAuthorNameClick($event)"></div>
+        <button class="btn btn-primary" id="showLongAuthorDescriptionButton"
+          (click)="showLongAuthorDescriptionButtonClick()">Long description</button>
+      </div>
+      <div id="keyword-explanation-field-container" style="display:none; position: relative;">
+        <button
+          style="position: absolute; top: 0px; right: 0px; background: none; border: none; font-size: 25px; cursor: pointer;"
+          (click)=removeKeywordExplanationField()>&times;</button>
+        <div id="keyword-explanation-field" [innerHTML]="keywordsExplanationUiMessage"></div>
+        <div class="chip-container" aria-label="Tags for keyword search">
+          <div *ngFor="let keywordCombinationTag of selectedTags">
+            <div class="chip">{{keywordCombinationTag}}</div>
+          </div>
+        </div>
+        <div class="keyword-button-field">
+          <button class="btn btn-warning" id="removeAllMarkerCircles"
+            (click)="removeKeywordMarkerCirclesButtonClick()">Remove circles</button>
+          <div class="confirmation-buttons">
+            <button class="btn btn-secondary" id="markArticlesWithPartWords" (click)="openBroadSearchModal()">Custom
+              Search</button>
+            <button class="btn btn-primary" id="markArticlesWithExactWord" (click)="markArticlesWithExactWord()">Exact
+              Search</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+<div class="modal fade" id="lensOptionsModal" tabindex="-1" aria-labelledby="broadSearchModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="lensOptionsModal">Settings</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="lensOptionsModalContainer">
+            <h5>Visualization</h5>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="toggleInfoBoard" checked
+                (click)="toggleInfoBoardButtonClick()">
+              <label class="form-check-label" for="toggleInfoBoard">Show Info Board</label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="toggleDynamicInfoBoard" checked
+                (click)="toggleDynamicInfoBoard()">
+              <label class="form-check-label" for="toggleQuickSummary">Static/Dynamic Info Board</label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="toggleStaticClusterLabels"
+                (click)="toggleStaticClusterLabelsButtonClick()">
+              <label class="form-check-label" for="toggleStaticClusterLabels">Show Cluster Labels</label>
+            </div>
+            <h5>Quick Task Settings:</h5>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="toggleQuickSummary"
+                (click)="toggleQuickSummary()" checked>
+              <label class="form-check-label" for="toggleQuickSummary">Quick Task</label>
+            </div>
+            <div>
+              <label for="quick-task-select">Choose Quick Task:</label>
+              <select id="quick-task-select">
+                <option value="summary">Summary</option>
+                <option value="one-fact">Most important fact</option>
+              </select>
+            </div>
+            <h5>Custom Task Settings:</h5>
+            <div>
+              <label for="task-select">Choose Custom Task:</label>
+              <select id="task-select" (change)="onTaskSelect($event)">
+                <option value="summary">Summary</option>
+                <option value="similarities">Similarities</option>
+                <option value="three-facts">Three most important facts</option>
+                <option value="controversies">Controversies among the abstracts</option>
+              </select>
+            </div>
+            <div>
+              <label for="response-length">Summary response length:</label>
+              <select id="response-length">
+                <option value="long">Long</option>
+                <option value="medium">Medium</option>
+              </select>
+            </div>
+            <h5>General:</h5>
+            <div>
+              <label for="role">Role:</label>
+              <select id="role">
+                <option value="basic">Standard</option>
+                <option value="expert">Expert</option>
+                <option value="newbie">Simplistic</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="modal fade" id="broadSearchModal" tabindex="-1" aria-labelledby="broadSearchModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="broadSearchModalLabel">Select Keywords</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="chip-container" aria-label="Tags for keyword search">
+            <div *ngFor="let keywordCombinationTag of keywordCombinationTags">
+              <div class="chip">
+                <div class="modal-chip">
+                  {{keywordCombinationTag}}
+                  <span class="closebtn" (click)="removeChip(keywordCombinationTag, true)">&times;</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="input-group mt-3">
+            <input type="text" class="form-control" placeholder="Add custom word. Capitalization does not matter"
+              [(ngModel)]="customInputKeyword" (keydown.enter)="addKeyword()">
+          </div>
+          <button type="button" class="btn btn-secondary" id="resetTagsButton" (click)="resetToStandardKeywordCombinationTags()">Reset to initial tags</button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+            (click)="customSearchForKeywords()">Search</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>

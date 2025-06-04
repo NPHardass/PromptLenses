@@ -1,0 +1,13 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Overwrite bootstrap styles with custom style */
+.response-with-keywords a {
+  color: #4682b4 ; 
+  text-decoration: none;
+}
+
+.response-with-keywords a:hover {
+  color: #0262b1 ; 
+  text-decoration: underline ; 
+}
+

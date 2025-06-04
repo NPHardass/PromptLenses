@@ -1,5 +1,7 @@
 # Overview
 
+![teaser](images/teaser.png)
+
 This repository contains the demo code for the work ''PromptLenses: Enhancing the Magic of Lenses (for Text Analysis)'' by Satkunarajan et al. [[1]](#ref1).
 
 We introduce an visual-interactive approach to fast analysis of textual data, utilizing a LLM-powered magic lens and a progressive analysis pipeline for the exploration of text data. 

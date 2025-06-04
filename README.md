@@ -6,7 +6,7 @@ This repository contains the demo code for the work ''PromptLenses: Enhancing th
 
 We introduce an visual-interactive approach to fast analysis of textual data, utilizing a LLM-powered magic lens and a progressive analysis pipeline for the exploration of text data. 
 
-The prototype implementation utilizes OpenAI's [GPT4o-mini] (https://platform.openai.com/docs/models/o4-mini) via the OpenAI API for the analysis of textual embeddings.
+The prototype implementation utilizes OpenAI's [GPT4omini] (https://platform.openai.com/docs/models/o4-mini) via the OpenAI API for the analysis of textual embeddings.
 
 The data is visualized as 2D projections by utilizing [UMAP](https://umap-learn.readthedocs.io/en/latest/) to dimensionality reduce the data.
 
